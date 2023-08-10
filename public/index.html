@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blitz Scores</title>
+</head>
+
+<body>
+    <div id="playerinfo">
+        <form id="playerform">
+            <input type="number" id="playercount" placeholder="Player Count" value="4" step="1">
+            <input type="submit" value="Submit">
+        </form>
+    </div>
+    <select>
+        <option value="1">1</option>
+        <option value="2">Racism</option>
+        <option value="3">Sexism</option>
+        <option value="4">Homophobia</option>
+        <option value="5">Transphobia</option>
+        <option value="6">Ableism</option>
+        <option value="7">Ageism</option>
+        <option value="8">Religious Discrimination</option>
+        <option value="9">Classism</option>
+        <option value="10">Colorism</option>
+        <option value="11">Lookism</option>
+        <option value="12">Xenophobia</option>
+        <option value="13">Anti-Semitism</option>
+        <option value="14">Islamophobia</option>
+    </select>
+</body>
+<script type="text/javascript">
+    let frm = document.getElementById("playerform");
+    var playercount;
+    var player_names = [];
+    var player_scores = [];
+    //Override default form submit
+    frm.addEventListener("submit", function (e) {
+        e.preventDefault();
+        if (document.getElementById("playercount")) {
+
+            playercount = document.getElementById("playercount").value;
+            try {
+                playercount = parseInt(playercount);
+                if (playercount < 1) return alert("Player count must be greater than 0");
+                if (playercount == NaN) return alert("Player count must be a number");
+                console.log(typeof (playercount))
+            } catch {
+                alert("Player count must be a number");
+            }
+            frm.innerHTML = "";
+            for (let i = 0; i < playercount; i++) {
+                let player = document.createElement("div");
+                player.innerHTML = `<input type="text" id="player${i+1}" placeholder="Player ${i + 1}">`;
+                frm.appendChild(player);
+            }
+            frm.appendChild(document.createElement("br"));
+            //Submit button
+            let submit = document.createElement("input");
+            submit.type = "submit";
+            submit.value = "Submit";
+            frm.appendChild(submit);
+        }
+        else if (document.getElementById("player1")) {
+            for (let i = 0; i < playercount; i++) {
+                player_names[i] = document.getElementById(`player${i+1}`).value;
+            }
+            console.log(player_names);
+            frm.innerHTML = "";
+            var round_num = 0;
+            while (true) {
+                round_num++;
+                frm.innerHTML = "";
+                let playerSelect = document.createElement("select");
+                frm.appendChild(playerSelect);
+            }
+        }
+    })
+</script>
+
+</html>
