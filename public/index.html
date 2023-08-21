@@ -1,130 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Blitz Scores</title>
-    <link rel="stylesheet" href="css/style.css">
+    <title>Card Games Scores</title>
+    <link rel="stylesheet" href="style.css">
+
 </head>
-
 <body>
-    <div id="playerinfo">
-        <form id="playerform">
-            <input type="number" id="playercount" placeholder="Player Count" value="4" step="1">
-            <input type="submit" value="Submit">
-        </form>
-    </div>
+    <h1>Card Game Scores</h1>
+    <h2>Select Game:</h2>
+    <a href="/dutchblitz"><button>Dutch Blitz</button></a>
 </body>
-<script type="text/javascript">
-    function generateRoundInput() {
-        console.log("test");
-        round_num++;
-        let round = document.createElement("div");
-        round.innerHTML = `<h2>Round ${round_num}</h2>`;
-        for (let i = 0; i < playercount; i++) {
-            round.innerHTML += `<input type="number" id="player${i+1}round${round_num}" placeholder="${player_names[i]}">`;
-        }
-        frm.appendChild(round);
-        frm.appendChild(document.createElement("br"));
-        //Submit button
-        let submit = document.createElement("input");
-        submit.type = "submit";
-        submit.value = "Submit";
-        frm.appendChild(submit);
-    }
-    function waitForButton(button_id) {
-        return new Promise(resolve => {
-            let button = document.getElementById(button_id);
-            button.addEventListener("click", () => {
-                resolve();
-            });
-        });
-    }
-
-    let frm = document.getElementById("playerform");
-    var playercount;
-    var player_names = [];
-    var player_scores = [];
-    //Override default form submit
-    frm.addEventListener("submit", async function (e) {
-        e.preventDefault();
-        if (document.getElementById("playercount")) {
-
-            playercount = document.getElementById("playercount").value;
-            try {
-                playercount = parseInt(playercount);
-                if (playercount < 1) return alert("Player count must be greater than 0");
-                if (playercount == NaN) return alert("Player count must be a number");
-                console.log(typeof (playercount))
-            } catch {
-                alert("Player count must be a number");
-            }
-            frm.innerHTML = "";
-            for (let i = 0; i < playercount; i++) {
-                let player = document.createElement("div");
-                player.innerHTML = `<input type="text" id="player${i+1}" placeholder="Player ${i + 1}">`;
-                frm.appendChild(player);
-            }
-            frm.appendChild(document.createElement("br"));
-            //Submit button
-            let submit = document.createElement("input");
-            submit.type = "submit";
-            submit.value = "Submit";
-            frm.appendChild(submit);
-        }
-        else if (document.getElementById("player1")) {
-            for (let i = 0; i < playercount; i++) {
-                player_names[i] = document.getElementById(`player${i+1}`).value;
-            }
-            console.log(player_names);
-            frm.innerHTML = "";
-            var round_num = 0;
-            while (true) {
-
-                round_num++;
-                let round = document.createElement("div");
-                round.innerHTML = `<h2>Round ${round_num}</h2>`;
-                    let select = document.createElement("select");
-                    select.id = `round${round_num}`;
-                    for (let j = 0; j < playercount; j++) {
-                        let option = document.createElement("option");
-                        option.value = player_names[j];
-                        option.innerHTML = player_names[j];
-                        select.appendChild(option);
-                    }
-                    round.appendChild(select);
-                frm.appendChild(round);
-                round.appendChild(document.createElement("br"));
-                //Submit button
-                let submit = document.createElement("input");
-                submit.type = "submit";
-                submit.value = "Submit";
-                submit.id = "player_out_sel";
-                frm.appendChild(submit);
-                await waitForButton("player_out_sel");
-                var out_player = document.getElementById(`round${round_num}`).value;
-                console.log(out_player);
-                frm.removeChild(round);
-                frm.removeChild(submit);
-                submit = document.createElement("input");
-                submit.type = "submit";
-                submit.value = "Submit";
-                submit.id = "player_score_sel";
-                round = document.createElement("div");
-                round.innerHTML = `<h2>Round ${round_num}</h2>`;
-                for (let i = 0; i < playercount; i++) {
-                    if (player_names[i] != out_player) {round.innerHTML += `<input type="number" id="player${i+1}round${round_num}blitz" placeholder="${player_names[i]} BLITZ">`} else {round.innerHTML += `<input disabled type="number" id="player${i+1}round${round_num}blitz" value="0" placeholder="${player_names[i]} BLITZ">`};
-                    round.innerHTML += `<input type="number" id="player${i+1}round${round_num}dutch" placeholder="${player_names[i]} DUTCH"><br>`;
-                }
-                frm.appendChild(round);
-                frm.appendChild(submit);
-                await waitForButton("player_score_sel");
-                frm.removeChild(round);
-                frm.removeChild(submit);
-            }
-        }
-    })
-</script>
-
 </html>
