@@ -9,11 +9,31 @@
 </head>
 
 <body>
-    <div class="topbar">
+    <div class="navbar">
         <a href="/">Home</a>
-        <a>Games</a>
-        <a>Tutorials</a>
-    </div>
+        <div class="dropdown">
+          <button class="dropbtn">Games 
+            <i class="fa fa-caret-down"></i>
+          </button>
+          <div class="dropdown-content">
+            <a href="/dutchblitz">Dutch Blitz</a>
+            <a href="/fivecrowns">Five Crowns</a>
+            <a href="/scum">Scum</a>
+          </div>
+          
+        </div> 
+        <div class="dropdown">
+            <button class="dropbtn">Tutorials 
+              <i class="fa fa-caret-down"></i>
+            </button>
+            <div class="dropdown-content">
+              <a href="#">Dutch Blitz</a>
+              <a href="#">Five Crowns</a>
+              <a href="#">Scum</a>
+            </div>
+            
+          </div> 
+      </div>
 
 
     <div id="playerinfo">
@@ -26,6 +46,7 @@
     </div>
 </body>
 <script type="text/javascript">
+    
 
     function waitForButton(button_id) {
         return new Promise(resolve => {
