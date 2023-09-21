@@ -7,6 +7,14 @@ app.get('/dutchblitz', (req, res) => {
     res.sendFile(__dirname + '/public/dutchblitz.html');
 });
 
+app.get('/fivecrowns', (req, res) => {
+    res.sendFile(__dirname + '/public/fivecrowns.html');
+});
+
+app.get('/scum', (req, res) => {
+    res.sendFile(__dirname + '/public/scum.html');
+});
+
 app.get('/', (req, res) => {
     res.sendFile(__dirname + '/public/index.html');
 });

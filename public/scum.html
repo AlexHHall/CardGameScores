@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Blitz Scores</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+
+  <body>
+    <div class="navbar">
+      <a href="/">Home</a>
+      <div class="dropdown">
+        <button class="dropbtn">
+          Games
+          <i class="fa fa-caret-down"></i>
+        </button>
+        <div class="dropdown-content">
+          <a href="/dutchblitz">Dutch Blitz</a>
+          <a href="/fivecrowns">Five Crowns</a>
+          <a href="/scum">Scum</a>
+        </div>
+      </div>
+      <div class="dropdown">
+        <button class="dropbtn">
+          Tutorials
+          <i class="fa fa-caret-down"></i>
+        </button>
+        <div class="dropdown-content">
+          <a href="https://huddlearoundgames.com/how-to-play-dutch-blitz/"
+            >Dutch Blitz</a
+          >
+          <a href="https://groupgames101.com/five-crowns-rules/">Five Crowns</a>
+          <a href="https://www.boardgamecapital.com/scum-rules.htm">Scum</a>
+        </div>
+      </div>
+    </div>
+    <h1>
+        Scum
+    </h1>
+
+    <div id="playerinfo">
+      <form id="playerform">
+        <h2>Enter Player Count</h2>
+
+        <input
+          type="number"
+          id="playercount"
+          placeholder="Player Count"
+          value="4"
+          step="1"
+        />
+        <input type="submit" value="Submit" />
+      </form>
+    </div>
+  </body>
+  <script type="text/javascript">
+    function waitForButton(button_id, condition) {
+      return new Promise((resolve) => {
+        let button = document.getElementById(button_id);
+        button.addEventListener("click", () => {
+          if (condition) {
+            resolve();
+          }
+          else {
+            alert("Please enter a valid number");
+          }
+        });
+      });
+    }
+
+    let frm = document.getElementById("playerform");
+    var playercount;
+    var player_names = [];
+    var player_scores = [];
+    //Override default form submit
+    frm.addEventListener("submit", async function (e) {
+      e.preventDefault();
+      if (document.getElementById("playercount")) {
+        playercount = document.getElementById("playercount").value;
+        try {
+          playercount = parseInt(playercount);
+          if (playercount < 2)
+            return alert("Player count must be greater than 2");
+          if (playercount == NaN) return alert("Player count must be a number");
+          console.log(typeof playercount);
+        } catch {
+          alert("Player count must be a number");
+        }
+        frm.innerHTML = "";
+        frm.innerHTML += `<h2>Enter Player Names</h2>`;
+        for (let i = 0; i < playercount; i++) {
+          let player = document.createElement("div");
+          player.innerHTML = `<input type="text" class="playername_entry" id="player${
+            i + 1
+          }" placeholder="Player ${i + 1} Name">`;
+          frm.appendChild(player);
+        }
+        frm.appendChild(document.createElement("br"));
+        //Submit button
+        let submit = document.createElement("input");
+        submit.type = "submit";
+        submit.value = "Submit";
+        frm.appendChild(submit);
+      } else if (document.getElementById("player1")) {
+        for (let i = 0; i < playercount; i++) {
+          player_names[i] = document.getElementById(`player${i + 1}`).value;
+          player_scores[i] = 0;
+        }
+        console.log(player_names);
+        frm.innerHTML = "";
+        var round_num = 0;
+        while (true) {
+          round_num++;
+          let round = document.createElement("div");
+          round.innerHTML = `<h2>Round ${round_num}</h2>`;
+          // Create a table with all of the players with a selector box asking to enter "President" or "Scum"
+          let player_table = document.createElement("table");
+          player_table.id = "player_table";
+          player_table.classList.add("player_table");
+          let player_table_header = document.createElement("tr");
+          player_table_header.innerHTML = `<th>Player</th><th>Rank</th>`;
+          player_table.appendChild(player_table_header);
+          for (let i = 0; i < playercount; i++) {
+            let player_row = document.createElement("tr");
+            if (playercount > 4) {
+              player_row.innerHTML = `<td>${player_names[i]}</td><td><select id="player${i + 1}_rank"><option value="Middleman">Middleman</option><option value="President">President</option><option value="VicePresident">Vice President</option><option value="ViceScum">Vice-Scum</option><option value="Scum">Scum</option></select></td>`;
+            } else if (playercount == 4) {
+              player_row.innerHTML = `<td>${player_names[i]}</td><td><select id="player${i + 1}_rank"><option value="None"> </option><option value="President">President</option><option value="VicePresident">Vice President</option><option value="ViceScum">Vice-Scum</option><option value="Scum">Scum</option></select></td>`;
+            } else if (playercount % 2 == 1) {
+              player_row.innerHTML = `<td>${player_names[i]}</td><td><select id="player${i + 1}_rank"><option value="Middleman">Middleman</option><option value="President">President</option><option value="Scum">Scum</option></select></td>`;
+            } else {
+              player_row.innerHTML = `<td>${player_names[i]}</td><td><select id="player${i + 1}_rank"><option value="None"> </option><option value="President">President</option><option value="Scum">Scum</option></select></td>`;
+            }
+            player_table.appendChild(player_row);
+          }
+          round.appendChild(player_table);
+
+          // Submit Button
+          let submit = document.createElement("input");
+          submit.type = "submit";
+          submit.value = "Submit";
+          submit.id = "roundsubmit";
+          round.appendChild(submit);
+          frm.appendChild(round);
+
+          await waitForButton("roundsubmit", true);
+          frm.innerHTML = "";
+
+
+
+        }
+      }
+    });
+  </script>
+</html>

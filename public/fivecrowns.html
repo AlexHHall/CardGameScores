@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Five Crowns Scores</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+
+  <body>
+    <div class="navbar">
+      <a href="/">Home</a>
+      <div class="dropdown">
+        <button class="dropbtn">
+          Games
+          <i class="fa fa-caret-down"></i>
+        </button>
+        <div class="dropdown-content">
+          <a href="/dutchblitz">Dutch Blitz</a>
+          <a href="/fivecrowns">Five Crowns</a>
+          <a href="/scum">Scum</a>
+        </div>
+      </div>
+      <div class="dropdown">
+        <button class="dropbtn">
+          Tutorials
+          <i class="fa fa-caret-down"></i>
+        </button>
+        <div class="dropdown-content">
+          <a href="https://huddlearoundgames.com/how-to-play-dutch-blitz/"
+            >Dutch Blitz</a
+          >
+          <a href="https://groupgames101.com/five-crowns-rules/">Five Crowns</a>
+          <a href="https://www.boardgamecapital.com/scum-rules.htm">Scum</a>
+        </div>
+      </div>
+    </div>
+    <h1>Five Crowns</h1>
+
+    <div id="playerinfo">
+      <form id="playerform">
+        <h2>Enter Player Count</h2>
+
+        <input
+          type="number"
+          id="playercount"
+          placeholder="Player Count"
+          value="4"
+          step="1"
+        />
+        <input type="submit" value="Submit" />
+      </form>
+    </div>
+  </body>
+  <script type="text/javascript">
+    function waitForButton(button_id) {
+      return new Promise((resolve) => {
+        let button = document.getElementById(button_id);
+        button.addEventListener("click", () => {
+          resolve();
+        });
+      });
+    }
+
+    let frm = document.getElementById("playerform");
+    var playercount;
+    var player_names = [];
+    var player_scores = [];
+    //Override default form submit
+    frm.addEventListener("submit", async function (e) {
+      e.preventDefault();
+      if (document.getElementById("playercount")) {
+        playercount = document.getElementById("playercount").value;
+        try {
+          playercount = parseInt(playercount);
+          if (playercount < 2 || playercount > 7)
+            return alert("Player count must be between 2 and 7");
+          if (playercount == NaN) return alert("Player count must be a number");
+          console.log(typeof playercount);
+        } catch {
+          alert("Player count must be a number");
+        }
+        frm.innerHTML = "";
+        frm.innerHTML += `<h2>Enter Player Names</h2>`;
+        for (let i = 0; i < playercount; i++) {
+          let player = document.createElement("div");
+          player.innerHTML = `<input type="text" class="playername_entry" id="player${
+            i + 1
+          }" placeholder="Player ${i + 1} Name">`;
+          frm.appendChild(player);
+        }
+        frm.appendChild(document.createElement("br"));
+        //Submit button
+        let submit = document.createElement("input");
+        submit.type = "submit";
+        submit.value = "Submit";
+        frm.appendChild(submit);
+      } else if (document.getElementById("player1")) {
+        for (let i = 0; i < playercount; i++) {
+          player_names[i] = document.getElementById(`player${i + 1}`).value;
+          player_scores[i] = 0;
+        }
+        console.log(player_names);
+        frm.innerHTML = "";
+        for (var round = 3; round <= 13; round++) {
+          let round_div = document.createElement("div");
+          round_div.innerHTML = `<h2>Round ${round}</h2>`;
+          let player_out_select = document.createElement("select");
+          player_out_select.id = "player_out_selector";
+          for (let i = 0; i < playercount; i++) {
+            let player_out_option = document.createElement("option");
+            player_out_option.value = player_names[i];
+            player_out_option.innerHTML = player_names[i];
+            player_out_select.appendChild(player_out_option);
+          }
+          round_div.appendChild(player_out_select);
+          // create a submit button
+          let submit = document.createElement("input");
+          submit.type = "submit";
+          submit.value = "Submit";
+          submit.id = "player_out_sel";
+          round_div.appendChild(submit);
+          let score_table2 = document.createElement("table");
+          score_table2.classList.add("score_table");
+          let score_table_header2 = document.createElement("tr");
+          score_table_header2.innerHTML = `<th>Player</th><th>Score</th>`;
+          score_table2.appendChild(score_table_header2);
+          for (let i = 0; i < playercount; i++) {
+            let score_table_row2 = document.createElement("tr");
+            score_table_row2.innerHTML = `<td>${player_names[i]}</td><td>${player_scores[i]}</td>`;
+            score_table2.appendChild(score_table_row2);
+          }
+          round_div.append(score_table2);
+
+          frm.appendChild(round_div);
+          await waitForButton("player_out_sel");
+          let out_player = document.getElementById("player_out_selector").value;
+          round_div.innerHTML = ``;
+          // add the title of the page back
+          round_div.innerHTML = `<h2>Round ${round}</h2>`;
+          // create a table with inputs to enter a score for each player with the "player_out_sel" player's score being 0
+          let score_table = document.createElement("table");
+          score_table.classList.add("score_table");
+          let score_table_header = document.createElement("tr");
+          score_table_header.innerHTML = `<th>Player</th><th>Score</th>`;
+          score_table.appendChild(score_table_header);
+          for (let i = 0; i < playercount; i++) {
+            let score_table_row = document.createElement("tr");
+            if (player_names[i] == out_player) {
+              score_table_row.innerHTML = `<td>${
+                player_names[i]
+              }</td><td><input type="number" id="player${
+                i + 1
+              }round${round}" placeholder="${
+                player_names[i]
+              } Score" value="0"</td>`;
+            } else {
+              score_table_row.innerHTML = `<td>${
+                player_names[i]
+              }</td><td><input type="number" id="player${
+                i + 1
+              }round${round}" placeholder="${player_names[i]} Score"></td>`;
+            }
+            score_table.appendChild(score_table_row);
+          }
+          round_div.appendChild(score_table);
+          // create a submit button
+          submit = document.createElement("input");
+          submit.type = "submit";
+          submit.value = "Submit";
+          submit.id = "player_score_sel";
+          round_div.appendChild(submit);
+          frm.appendChild(round_div);
+          // display the current scores
+
+          round_div.appendChild(score_table2);
+          frm.appendChild(round_div);
+          await waitForButton("player_score_sel");
+          // Save Scores to List called playerScores
+          for (let i = 0; i < playercount; i++) {
+            player_scores[i] += parseInt(
+              document.getElementById(`player${i + 1}round${round}`).value
+            );
+          }
+          console.log("PlayerScores " + player_scores);
+          frm.removeChild(round_div);
+        }
+      }
+    });
+  </script>
+</html>
