@@ -103,3 +103,23 @@ body {
 .dropdown:hover .dropdown-content {
   display: block;
 }
+
+/* Style the score table element so that it is in the center of the screen
+and has a border around it */
+.score_table {
+    margin-left: auto;
+    margin-right: auto;
+    border: 1px solid black;
+}
+
+/* Style the table headers so that they are bold and have a background color */
+.score_table th {
+    font-weight: bold;
+    background-color: #ddd;
+    padding: 10px;
+}
+
+.input_table {
+  margin-left: auto;
+  margin-right: auto;
+}

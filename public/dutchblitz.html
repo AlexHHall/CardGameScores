@@ -78,7 +78,7 @@
             frm.innerHTML += `<h2>Enter Player Names</h2>`;
             for (let i = 0; i < playercount; i++) {
                 let player = document.createElement("div");
-                player.innerHTML = `<input type="text" id="player${i+1}" placeholder="Player ${i + 1} Name">`;
+                player.innerHTML = `<input type="text" class="playername_entry" id="player${i+1}" placeholder="Player ${i + 1} Name">`;
                 frm.appendChild(player);
             }
             frm.appendChild(document.createElement("br"));
@@ -89,8 +89,10 @@
             frm.appendChild(submit);
         }
         else if (document.getElementById("player1")) {
+             
             for (let i = 0; i < playercount; i++) {
                 player_names[i] = document.getElementById(`player${i+1}`).value;
+                player_scores[i] = 0;
             }
             console.log(player_names);
             frm.innerHTML = "";
@@ -126,13 +128,57 @@
                 submit.id = "player_score_sel";
                 round = document.createElement("div");
                 round.innerHTML = `<h2>Round ${round_num}</h2>`;
+                /*
                 for (let i = 0; i < playercount; i++) {
                     if (player_names[i] != out_player) {round.innerHTML += `<input type="number" id="player${i+1}round${round_num}blitz" placeholder="${player_names[i]} BLITZ">`} else {round.innerHTML += `<input type="number" id="player${i+1}round${round_num}blitz" value="0" placeholder="${player_names[i]} BLITZ">`};
                     round.innerHTML += `<input type="number" id="player${i+1}round${round_num}dutch" placeholder="${player_names[i]} DUTCH"><br>`;
                 }
+                */
+                var input_table = document.createElement("table");
+                input_table.classList.add("input_table");
+                var input_table_header = document.createElement("tr");
+                input_table_header.innerHTML = `<th>Player</th><th>Blitz</th><th>Dutch</th>`;
+                input_table.appendChild(input_table_header);
+                for (let i = 0; i < playercount; i++) {
+                    var input_table_row = document.createElement("tr");
+                    if (player_names[i] != out_player) {
+                        input_table_row.innerHTML = `<td>${player_names[i]}</td><td><input type="number" id="player${i+1}round${round_num}blitz" placeholder="${player_names[i]} BLITZ"></td><td><input type="number" id="player${i+1}round${round_num}dutch" placeholder="${player_names[i]} DUTCH"></td>`;
+
+                    } else {
+                        input_table_row.innerHTML = `<td>${player_names[i]}</td><td><input type="number" id="player${i+1}round${round_num}blitz" placeholder="${player_names[i]} BLITZ" value="0"></td><td><input type="number" id="player${i+1}round${round_num}dutch" placeholder="${player_names[i]} DUTCH"></td>`;
+
+                    }
+                    input_table.appendChild(input_table_row);
+                }
+                round.appendChild(input_table);
+
+                
+
                 round.appendChild(submit);
+
+                // Create a table displaying the scores of each player
+                let score_table = document.createElement("table");
+                score_table.classList.add("score_table");
+                let score_table_header = document.createElement("tr");
+                score_table_header.innerHTML = `<th>Player</th><th>Score</th>`;
+                score_table.appendChild(score_table_header);
+                for (let i = 0; i < playercount; i++) {
+                    let score_table_row = document.createElement("tr");
+                    score_table_row.innerHTML = `<td>${player_names[i]}</td><td>${player_scores[i]}</td>`;
+                    score_table.appendChild(score_table_row);
+                }
+                round.appendChild(score_table);
+
                 frm.appendChild(round);
                 await waitForButton("player_score_sel");
+                // Save Scores to List called playerScores
+                for (let i = 0; i < playercount; i++) {
+                        player_scores[i] += -parseInt(document.getElementById(`player${i+1}round${round_num}blitz`).value)*2 + parseInt(document.getElementById(`player${i+1}round${round_num}dutch`).value);
+                }
+                console.log("PlayerScores " + player_scores);
+
+
+
                 frm.removeChild(round);
             }
         }
