@@ -35,9 +35,7 @@
         </div>
       </div>
     </div>
-    <h1>
-        Scum
-    </h1>
+    <h1>Scum</h1>
 
     <div id="playerinfo">
       <form id="playerform">
@@ -55,15 +53,43 @@
     </div>
   </body>
   <script type="text/javascript">
+    function checkContinue() {
+      continue_game = true;
+      for (let i = 0; i < playercount; i++) {
+        if (document.getElementById(`player${i + 1}_rank`).value == "None") {
+          continue_game = false;
+          console.log("Don't Continue");
+        }
+        // check to see if there are any duplicated ranks except for middleman
+        for (let j = 0; j < playercount; j++) {
+          if (i != j) {
+            if (
+              document.getElementById(`player${i + 1}_rank`).value ==
+              document.getElementById(`player${j + 1}_rank`).value
+            ) {
+              if (
+                document.getElementById(`player${i + 1}_rank`).value !=
+                "Middleman"
+              ) {
+                continue_game = false;
+                console.log("Don't Continue");
+              }
+            }
+          }
+        }
+      }
+      return continue_game;
+    }
     function waitForButton(button_id, condition) {
       return new Promise((resolve) => {
         let button = document.getElementById(button_id);
         button.addEventListener("click", () => {
           if (condition) {
+            if (checkContinue()) resolve();
+            else return alert("Invalid Rank Selections");
             resolve();
-          }
-          else {
-            alert("Please enter a valid number");
+          } else {
+            alert("Something went wrong");
           }
         });
       });
@@ -110,7 +136,8 @@
         console.log(player_names);
         frm.innerHTML = "";
         var round_num = 0;
-        while (true) {
+        let game_running = true;
+        while (game_running) {
           round_num++;
           let round = document.createElement("div");
           round.innerHTML = `<h2>Round ${round_num}</h2>`;
@@ -124,13 +151,29 @@
           for (let i = 0; i < playercount; i++) {
             let player_row = document.createElement("tr");
             if (playercount > 4) {
-              player_row.innerHTML = `<td>${player_names[i]}</td><td><select id="player${i + 1}_rank"><option value="Middleman">Middleman</option><option value="President">President</option><option value="VicePresident">Vice President</option><option value="ViceScum">Vice-Scum</option><option value="Scum">Scum</option></select></td>`;
+              player_row.innerHTML = `<td>${
+                player_names[i]
+              }</td><td><select id="player${
+                i + 1
+              }_rank"><option value="Middleman">Middleman</option><option value="President">President</option><option value="VicePresident">Vice President</option><option value="ViceScum">Vice-Scum</option><option value="Scum">Scum</option></select></td>`;
             } else if (playercount == 4) {
-              player_row.innerHTML = `<td>${player_names[i]}</td><td><select id="player${i + 1}_rank"><option value="None"> </option><option value="President">President</option><option value="VicePresident">Vice President</option><option value="ViceScum">Vice-Scum</option><option value="Scum">Scum</option></select></td>`;
+              player_row.innerHTML = `<td>${
+                player_names[i]
+              }</td><td><select id="player${
+                i + 1
+              }_rank"><option value="None"> </option><option value="President">President</option><option value="VicePresident">Vice President</option><option value="ViceScum">Vice-Scum</option><option value="Scum">Scum</option></select></td>`;
             } else if (playercount % 2 == 1) {
-              player_row.innerHTML = `<td>${player_names[i]}</td><td><select id="player${i + 1}_rank"><option value="Middleman">Middleman</option><option value="President">President</option><option value="Scum">Scum</option></select></td>`;
+              player_row.innerHTML = `<td>${
+                player_names[i]
+              }</td><td><select id="player${
+                i + 1
+              }_rank"><option value="Middleman">Middleman</option><option value="President">President</option><option value="Scum">Scum</option></select></td>`;
             } else {
-              player_row.innerHTML = `<td>${player_names[i]}</td><td><select id="player${i + 1}_rank"><option value="None"> </option><option value="President">President</option><option value="Scum">Scum</option></select></td>`;
+              player_row.innerHTML = `<td>${
+                player_names[i]
+              }</td><td><select id="player${
+                i + 1
+              }_rank"><option value="None"> </option><option value="President">President</option><option value="Scum">Scum</option></select></td>`;
             }
             player_table.appendChild(player_row);
           }
@@ -141,14 +184,89 @@
           submit.type = "submit";
           submit.value = "Submit";
           submit.id = "roundsubmit";
+          let end_game = document.createElement("input");
+          end_game.type = "submit";
+          end_game.value = "End Game";
+          end_game.id = "endgame";
+          end_game.addEventListener("click", () => {
+            game_running = false;
+            frm.innerHTML = "";
+            // display final scores to player
+            // display the name of the winning player
+            let winning_player = 0;
+            for (let i = 0; i < playercount; i++) {
+              if (player_scores[i] > player_scores[winning_player]) {
+                winning_player = i;
+              }
+            }
+            let winner = document.createElement("div");
+            winner.innerHTML = `<h2>Winner: ${player_names[winning_player]}</h2>`;
+            frm.appendChild(winner);
+
+            let final_scores = document.createElement("div");
+            final_scores.innerHTML = `<h2>Final Scores</h2>`;
+            let score_table = document.createElement("table");
+            score_table.id = "score_table";
+            score_table.classList.add("score_table");
+            let score_table_header = document.createElement("tr");
+            score_table_header.innerHTML = `<th>Player</th><th>Score</th>`;
+            score_table.appendChild(score_table_header);
+            for (let i = 0; i < playercount; i++) {
+              let score_row = document.createElement("tr");
+              score_row.innerHTML = `<td>${player_names[i]}</td><td>${player_scores[i]}</td>`;
+              score_table.appendChild(score_row);
+            }
+            final_scores.appendChild(score_table);
+            frm.appendChild(final_scores);
+            // create a play again button that will reset the page
+            let play_again = document.createElement("input");
+            play_again.type = "submit";
+            play_again.value = "Play Again";
+            play_again.id = "playagain";
+            play_again.addEventListener("click", () => {
+              location.reload();
+            });
+            frm.appendChild(play_again);
+          });
+          round.appendChild(end_game);
           round.appendChild(submit);
           frm.appendChild(round);
+          let continue_game = true;
+          // display the players scores
+          let score_table = document.createElement("table");
+          score_table.id = "score_table";
+          score_table.classList.add("score_table");
+          let score_table_header = document.createElement("tr");
+          score_table_header.innerHTML = `<th>Player</th><th>Score</th>`;
+          score_table.appendChild(score_table_header);
+          for (let i = 0; i < playercount; i++) {
+            let score_row = document.createElement("tr");
+            score_row.innerHTML = `<td>${player_names[i]}</td><td>${player_scores[i]}</td>`;
+            score_table.appendChild(score_row);
+          }
+          frm.appendChild(score_table);
+          if (game_running) {
+            await waitForButton("roundsubmit", true);
+          }
 
-          await waitForButton("roundsubmit", true);
+          // get the ranks of every player and give them points based on their rank
+          for (let i = 0; i < playercount; i++) {
+            let player_rank = document.getElementById(
+              `player${i + 1}_rank`
+            ).value;
+            if (player_rank == "President") {
+              player_scores[i] += 3;
+            } else if (player_rank == "VicePresident") {
+              player_scores[i] += 2;
+            } else if (player_rank == "ViceScum") {
+              player_scores[i] += 1;
+            } else if (player_rank == "Scum") {
+              player_scores[i] -= 1;
+            } else if (player_rank == "Middleman") {
+              player_scores[i] += 0;
+            }
+          }
           frm.innerHTML = "";
-
-
-
         }
       }
     });

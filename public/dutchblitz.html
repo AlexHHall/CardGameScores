@@ -35,9 +35,7 @@
         </div>
       </div>
     </div>
-    <h1>
-        Dutch Blitz
-    </h1>
+    <h1>Dutch Blitz</h1>
 
     <div id="playerinfo">
       <form id="playerform">
@@ -61,6 +59,11 @@
         button.addEventListener("click", () => {
           resolve();
         });
+        if (document.getElementById("end_game")) {
+          document.getElementById("end_game").addEventListener("click", () => {
+            resolve();
+          });
+        }
       });
     }
 
@@ -105,7 +108,9 @@
         console.log(player_names);
         frm.innerHTML = "";
         var round_num = 0;
-        while (true) {
+        let game_running = true;
+        let stop_game = false;
+        while (game_running) {
           round_num++;
           let round = document.createElement("div");
           round.innerHTML = `<h2>Round ${round_num}</h2><h3 class="defineblitz">Select The Player Who <u>Blitzed</u></h3><p class="hidden">Blitzed:<br>The player who emptied their Blitz pile first.</p>`;
@@ -136,8 +141,20 @@
           submit.type = "submit";
           submit.value = "Submit";
           submit.id = "player_out_sel";
+          let endgame = document.createElement("input");
+          endgame.type = "submit";
+          endgame.value = "End Game";
+          endgame.id = "end_game";
+          endgame.addEventListener("click", () => {
+            console.log("Stopping Game");
+            game_running = false;
+            stop_game = true;
+          });
+          round.appendChild(endgame);
           round.appendChild(submit);
-          await waitForButton("player_out_sel");
+          if (!stop_game) {
+            await waitForButton("player_out_sel");
+          }
           var out_player = document.getElementById(`round${round_num}`).value;
           console.log(out_player);
           frm.removeChild(round);
@@ -192,28 +209,55 @@
           round.appendChild(submit);
 
           // Create a table displaying the scores of each player
-          
+
           round.appendChild(score_table);
 
           frm.appendChild(round);
-          await waitForButton("player_score_sel");
-          // Save Scores to List called playerScores
-          for (let i = 0; i < playercount; i++) {
-            player_scores[i] +=
-              -parseInt(
-                document.getElementById(`player${i + 1}round${round_num}blitz`)
-                  .value
-              ) *
-                2 +
-              parseInt(
-                document.getElementById(`player${i + 1}round${round_num}dutch`)
-                  .value
-              );
+          if (!stop_game) {
+            await waitForButton("player_score_sel");
           }
-          console.log("PlayerScores " + player_scores);
+          // Save Scores to List called playerScores
+          if (!stop_game) {
+            for (let i = 0; i < playercount; i++) {
+              player_scores[i] +=
+                -parseInt(
+                  document.getElementById(
+                    `player${i + 1}round${round_num}blitz`
+                  ).value
+                ) *
+                  2 +
+                parseInt(
+                  document.getElementById(
+                    `player${i + 1}round${round_num}dutch`
+                  ).value
+                );
+            }
+            console.log("PlayerScores " + player_scores);
+          }
 
           frm.removeChild(round);
         }
+        // display the final scores and winner to the user, the winner is the player with the most points
+        let winner = 0;
+        for (let i = 0; i < playercount; i++) {
+          if (player_scores[i] > player_scores[winner]) {
+            winner = i;
+          }
+        }
+        frm.innerHTML = "";
+        frm.innerHTML += `<h2>Final Scores</h2>`;
+        let score_table = document.createElement("table");
+        score_table.classList.add("score_table");
+        let score_table_header = document.createElement("tr");
+        score_table_header.innerHTML = `<th>Player</th><th>Score</th>`;
+        score_table.appendChild(score_table_header);
+        for (let i = 0; i < playercount; i++) {
+          let score_table_row = document.createElement("tr");
+          score_table_row.innerHTML = `<td>${player_names[i]}</td><td>${player_scores[i]}</td>`;
+          score_table.appendChild(score_table_row);
+        }
+        frm.appendChild(score_table);
+        frm.innerHTML += `<h2>Winner: ${player_names[winner]}</h2>`;
       }
     });
   </script>

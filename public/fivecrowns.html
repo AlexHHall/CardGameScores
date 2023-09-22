@@ -185,6 +185,27 @@
           console.log("PlayerScores " + player_scores);
           frm.removeChild(round_div);
         }
+        // display the final scores and winner to the user, the winner is the player with the LEAST points
+        let winner = 0;
+        for (let i = 0; i < playercount; i++) {
+          if (player_scores[i] < player_scores[winner]) {
+            winner = i;
+          }
+        }
+        frm.innerHTML = "";
+        frm.innerHTML += `<h2>Final Scores</h2>`;
+        let score_table = document.createElement("table");
+        score_table.classList.add("score_table");
+        let score_table_header = document.createElement("tr");
+        score_table_header.innerHTML = `<th>Player</th><th>Score</th>`;
+        score_table.appendChild(score_table_header);
+        for (let i = 0; i < playercount; i++) {
+          let score_table_row = document.createElement("tr");
+          score_table_row.innerHTML = `<td>${player_names[i]}</td><td>${player_scores[i]}</td>`;
+          score_table.appendChild(score_table_row);
+        }
+        frm.appendChild(score_table);
+        frm.innerHTML += `<h2>Winner: ${player_names[winner]}</h2>`;
       }
     });
   </script>
