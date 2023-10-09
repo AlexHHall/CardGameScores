@@ -53,10 +53,28 @@
     </div>
   </body>
   <script type="text/javascript">
+    function checkScores() {
+      for (let i = 0; i < playercount; i++) {
+        console.log(`player${i + 1}round${round}`);
+        console.log(
+          document.getElementById(`player${i + 1}round${round}`).value
+        );
+        if (document.getElementById(`player${i + 1}round${round}`).value < 0) {
+          console.log("false");
+          return false;
+        }
+      }
+      console.log("true");
+      return true;
+    }
+
     function waitForButton(button_id) {
       return new Promise((resolve) => {
         let button = document.getElementById(button_id);
         button.addEventListener("click", () => {
+          if (button_id == "player_score_sel") {
+            if (!checkScores()) return;
+          }
           resolve();
         });
       });
@@ -66,6 +84,7 @@
     var playercount;
     var player_names = [];
     var player_scores = [];
+    var round = 3;
     //Override default form submit
     frm.addEventListener("submit", async function (e) {
       e.preventDefault();
@@ -102,7 +121,7 @@
         }
         console.log(player_names);
         frm.innerHTML = "";
-        for (var round = 3; round <= 13; round++) {
+        for (; round <= 13; round++) {
           let round_div = document.createElement("div");
           round_div.innerHTML = `<h2>Round ${round}</h2>`;
           let player_out_select = document.createElement("select");

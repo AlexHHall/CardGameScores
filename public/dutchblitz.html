@@ -53,10 +53,42 @@
     </div>
   </body>
   <script type="text/javascript">
+    function checkScores() {
+      for (let i = 0; i < playercount; i++) {
+        console.log(i);
+        if (
+          parseInt(
+            document.getElementById(`player${i + 1}round${round_num}blitz`)
+              .value
+          ) < 0 ||
+          parseInt(
+            document.getElementById(`player${i + 1}round${round_num}blitz`)
+              .value
+          ) > 10 ||
+          parseInt(
+            document.getElementById(`player${i + 1}round${round_num}dutch`)
+              .value
+          ) < 0 ||
+          document
+            .getElementById(`player${i + 1}round${round_num}dutch`)
+            .value.trim() == "" ||
+          document
+            .getElementById(`player${i + 1}round${round_num}blitz`)
+            .value.trim() == ""
+        ) {
+          return false;
+        }
+      }
+      return true;
+    }
+    var round_num;
     function waitForButton(button_id) {
       return new Promise((resolve) => {
         let button = document.getElementById(button_id);
         button.addEventListener("click", () => {
+          if (button_id == "player_score_sel") {
+            if (!checkScores()) return;
+          }
           resolve();
         });
         if (document.getElementById("end_game")) {
@@ -107,7 +139,7 @@
         }
         console.log(player_names);
         frm.innerHTML = "";
-        var round_num = 0;
+        round_num = 0;
         let game_running = true;
         let stop_game = false;
         while (game_running) {
