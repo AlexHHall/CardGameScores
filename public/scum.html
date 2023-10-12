@@ -72,12 +72,48 @@
 
     function checkContinue() {
       continue_game = true;
+      let president_count = 0;
+      let vice_president_count = 0;
+      let vice_scum_count = 0;
+      let scum_count = 0;
+      let middleman_count = 0;
+      for (let i = 0; i < playercount; i++) {
+        if (document.getElementById(`player${i + 1}_rank`).value == "President") {
+          president_count++;
+        } else if (document.getElementById(`player${i + 1}_rank`).value == "VicePresident") {
+          vice_president_count++;
+        } else if (document.getElementById(`player${i + 1}_rank`).value == "ViceScum") {
+          vice_scum_count++;
+        } else if (document.getElementById(`player${i + 1}_rank`).value == "Scum") {
+          scum_count++;
+        } else if (document.getElementById(`player${i + 1}_rank`).value == "Middleman") {
+          middleman_count++;
+        }
+      }
+      if (playercount > 5) {
+          if (president_count == 0 || vice_president_count == 0 || vice_scum_count == 0 || scum_count == 0 || middleman_count == 0) {
+          continue_game = false;
+        }
+      } else if (playercount == 4) {
+        if (president_count == 0 || vice_president_count == 0 || vice_scum_count == 0 || scum_count == 0) {
+          continue_game = false;
+        }
+      } else if (playercount == 3) {
+        if (president_count == 0 || scum_count == 0 || middleman_count == 0) {
+          continue_game = false;
+        }
+      } else if (playercount == 2) {
+        if (president_count == 0 || scum_count == 0) {
+          continue_game = false;
+      }
+    }
+
       for (let i = 0; i < playercount; i++) {
         if (document.getElementById(`player${i + 1}_rank`).value == "None") {
           continue_game = false;
-          console.log("Don't Continue");
         }
         // check to see if there are any duplicated ranks except for middleman
+        
         for (let j = 0; j < playercount; j++) {
           if (i != j) {
             if (
@@ -89,7 +125,6 @@
                 "Middleman"
               ) {
                 continue_game = false;
-                console.log("Don't Continue");
               }
             }
           }
