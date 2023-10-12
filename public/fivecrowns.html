@@ -53,18 +53,32 @@
     </div>
   </body>
   <script type="text/javascript">
-    function checkScores() {
+    // write a function that checks each players names and makes sure that no two names are the same
+    function checkNames() {
+      console.log("Test1");
       for (let i = 0; i < playercount; i++) {
-        console.log(`player${i + 1}round${round}`);
-        console.log(
-          document.getElementById(`player${i + 1}round${round}`).value
-        );
-        if (document.getElementById(`player${i + 1}round${round}`).value < 0) {
-          console.log("false");
+        for (let j = i + 1; j < playercount; j++) {
+          if (document.getElementById(`player${i + 1}`).value == document.getElementById(`player${j + 1}`).value) {
+            return false;
+          }
+        }
+      }
+      for (let i = 0; i < playercount; i++) {
+        if (document.getElementById(`player${i + 1}`).value == "") {
           return false;
         }
       }
-      console.log("true");
+      return true;
+    }
+    
+    function checkScores() {
+      for (let i = 0; i < playercount; i++) {
+
+        if (document.getElementById(`player${i + 1}round${round}`).value < 0 || isNaN(parseInt(document.getElementById(`player${i + 1}round${round}`).value))) {
+          return false;
+        }
+      }
+      
       return true;
     }
 
@@ -74,6 +88,9 @@
         button.addEventListener("click", () => {
           if (button_id == "player_score_sel") {
             if (!checkScores()) return;
+          }
+          if (button_id == "") {
+            if (!checkNames()) return;
           }
           resolve();
         });
@@ -86,6 +103,7 @@
     var player_scores = [];
     var round = 3;
     //Override default form submit
+    var t = false;
     frm.addEventListener("submit", async function (e) {
       e.preventDefault();
       if (document.getElementById("playercount")) {
@@ -114,7 +132,7 @@
         submit.type = "submit";
         submit.value = "Submit";
         frm.appendChild(submit);
-      } else if (document.getElementById("player1")) {
+      } else if (document.getElementById("player1") && checkNames()) {
         for (let i = 0; i < playercount; i++) {
           player_names[i] = document.getElementById(`player${i + 1}`).value;
           player_scores[i] = 0;

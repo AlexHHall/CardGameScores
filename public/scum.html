@@ -53,6 +53,23 @@
     </div>
   </body>
   <script type="text/javascript">
+    function checkNames() {
+      console.log("Test1");
+      for (let i = 0; i < playercount; i++) {
+        for (let j = i + 1; j < playercount; j++) {
+          if (document.getElementById(`player${i + 1}`).value == document.getElementById(`player${j + 1}`).value) {
+            return false;
+          }
+        }
+      }
+      for (let i = 0; i < playercount; i++) {
+        if (document.getElementById(`player${i + 1}`).value == "") {
+          return false;
+        }
+      }
+      return true;
+    }
+
     function checkContinue() {
       continue_game = true;
       for (let i = 0; i < playercount; i++) {
@@ -128,7 +145,7 @@
         submit.type = "submit";
         submit.value = "Submit";
         frm.appendChild(submit);
-      } else if (document.getElementById("player1")) {
+      } else if (document.getElementById("player1") && checkNames()) {
         for (let i = 0; i < playercount; i++) {
           player_names[i] = document.getElementById(`player${i + 1}`).value;
           player_scores[i] = 0;
